@@ -1,0 +1,126 @@
+@extends('backend.layouts.admin.master')
+@section('title', 'On Reviewed Order')
+@push('css')
+    {{--custom css--}}
+@endpush
+@section('content')
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+            <div class="content container-fluid">
+
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col-sm-7 col-auto">
+                            <h3 class="page-title">On Reviewed Order</h3>
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">Dashboard</a></li>
+                                <li class="breadcrumb-item active">On Reviewed Order</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Page Header -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="order" class="table  " style="width:100%;overflow-x:auto;">
+                                        <thead>
+                                        <tr>
+                                            <th>#ID</th>
+                                            <th>Date</th>
+                                            <th>Invoice ID</th>
+                                            <th>Area</th>
+                                            <th>Payment Method</th>
+                                            <th>Grand Total</th>
+                                            <th>Discount</th>
+                                            <th>Total Vat</th>
+                                            <th title="Delivery Status">D.Status</th>
+                                            <th>Details</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @php $i = 0; @endphp
+                                        @foreach($onReview as $key => $review)
+                                            @php $i++; @endphp
+                                            <tr>
+                                                <td>{{$i }}</td>
+                                                <td>{{date('j-m-Y',strtotime($review->created_at))}}</td>
+                                                <td>{{$review->invoice_code}}</td>
+                                                <td>{{$review->area}}</td>
+                                                <td>{{$review->payment_type}}</td>
+                                                <td>{{$review->grand_total }}</td>
+                                                <td>{{$review->discount }}</td>
+                                                <td>{{$review->total_vat }}</td>
+                                                <td>
+                                                    <form id="status-form-{{$review->id}}" action="{{route('admin.order-product.status',$review->id)}}">
+                                                        <select name="delivery_status" id="" onchange="deliveryStatusChange({{$review->id}})">
+                                                            <option value="On review" {{$review->delivery_status == 'On review'? 'selected' : ''}}>On review</option>
+                                                            <option value="On delivered" {{$review->delivery_status == 'On delivered'? 'selected' : ''}}>On delivered</option>
+                                                            <option value="Delivered" {{$review->delivery_status == 'Delivered'? 'selected' : ''}}>Delivered</option>
+                                                            <option value="Completed" {{$review->delivery_status == 'Completed'? 'selected' : ''}}>Completed</option>
+                                                            <option value="Cancel" {{$review->delivery_status == 'Cancel'? 'selected' : ''}}>Cancel</option>
+                                                        </select>
+                                                    </form>
+
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-info waves-effect" href="{{route('admin.order-details',encrypt($review->id))}}">
+                                                        <i class="fa fa-eye"></i> View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                        <tr>
+                                            <th>#ID</th>
+                                            <th>Date</th>
+                                            <th>Invoice ID</th>
+                                            <th>Area</th>
+                                            <th>Payment Method</th>
+                                            <th>Grand Total</th>
+                                            <th>Discount</th>
+                                            <th>Total Vat</th>
+                                            <th title="Delivery Status">D.Status</th>
+                                            <th>Details</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Page Wrapper -->
+
+        <!-- Delete Modal -->
+        <div class="modal fade" id="delete_modal" aria-hidden="true" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document" >
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="form-content p-2">
+                            <h4 class="modal-title">Delete</h4>
+                            <p class="mb-4">Are you sure want to delete?</p>
+                            <button type="button" class="btn btn-primary">Save </button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /Delete Modal -->
+    </div>
+
+@endsection
+@push('js')
+    <script !src = "">
+        $(document).ready( function () {
+            $('#order').DataTable();
+        } );
+    </script>
+@endpush
